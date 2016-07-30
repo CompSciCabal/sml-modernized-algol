@@ -3,6 +3,7 @@ struct
   datatype 'i t =
       CMD_TY
     | CMD
+    | LAM
     | NAT
     | NUM of int
     | RET
@@ -12,6 +13,7 @@ struct
     | SET of 'i
 
   fun eq f (CMD_TY, CMD_TY) = true
+    | eq f (LAM, LAM) = true
     | eq f (NAT, NAT) = true
     | eq f (NUM x, NUM y) = x = y
     | eq f (CMD, CMD) = true
@@ -25,6 +27,7 @@ struct
   fun toString f theta =
     case theta of
          CMD_TY => "cmd"
+       | LAM => "lam"
        | NAT => "nat"
        | NUM i => Int.toString i
        | CMD => "cmd"
@@ -47,6 +50,7 @@ struct
     fun K tau = (([], []), tau)
   in
     fun arity CMD_TY = ([K S.TYP], S.TYP)
+      | arity LAM = ([K S.TYP, (([], [S.EXP]), S.EXP)], S.EXP)
       | arity NAT = ([], S.TYP)
       | arity (NUM _) = ([], S.EXP)
       | arity CMD = ([K S.CMD], S.EXP)
@@ -62,6 +66,7 @@ struct
     | support _ = []
 
   fun map f CMD_TY = CMD_TY
+    | map f LAM = LAM
     | map f NAT = NAT
     | map f (NUM x) = NUM x
     | map f CMD = CMD
