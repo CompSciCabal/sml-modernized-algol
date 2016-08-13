@@ -1,7 +1,8 @@
 structure OperatorData =
 struct
   datatype 'i t =
-      CMD_TY
+      ARR_TY
+    | CMD_TY
     | CMD
     | LAM
     | NAT
@@ -12,7 +13,8 @@ struct
     | GET of 'i
     | SET of 'i
 
-  fun eq f (CMD_TY, CMD_TY) = true
+  fun eq f (ARR_TY, ARR_TY) = true
+    | eq f (CMD_TY, CMD_TY) = true
     | eq f (LAM, LAM) = true
     | eq f (NAT, NAT) = true
     | eq f (NUM x, NUM y) = x = y
@@ -26,7 +28,8 @@ struct
 
   fun toString f theta =
     case theta of
-         CMD_TY => "cmd"
+         ARR_TY => "arr"
+       | CMD_TY => "cmd"
        | LAM => "lam"
        | NAT => "nat"
        | NUM i => Int.toString i
@@ -49,7 +52,8 @@ struct
   local
     fun K tau = (([], []), tau)
   in
-    fun arity CMD_TY = ([K S.TYP], S.TYP)
+    fun arity ARR_TY = ([K S.TYP, K S.TYP], S.TYP)
+      | arity CMD_TY = ([K S.TYP], S.TYP)
       | arity LAM = ([K S.TYP, (([], [S.EXP]), S.EXP)], S.EXP)
       | arity NAT = ([], S.TYP)
       | arity (NUM _) = ([], S.EXP)
@@ -65,7 +69,8 @@ struct
     | support (SET i) = [(i, S.EXP)]
     | support _ = []
 
-  fun map f CMD_TY = CMD_TY
+  fun map f ARR_TY = ARR_TY
+    | map f CMD_TY = CMD_TY
     | map f LAM = LAM
     | map f NAT = NAT
     | map f (NUM x) = NUM x

@@ -29,6 +29,14 @@ struct
              in
                O.CMD_TY $$ [([], []) \ T]
              end
+         | O.LAM $ [_ \ T, ([], [x]) \ E2] =>
+             let
+               val Gm' = VCtx.insert Gm x T
+               val C   = check (Gm', Sg) E2
+               val (TE2, S.TYP) = Abt.infer C
+             in
+               O.ARR_TY $$ [([], []) \ T, ([], []) \ C]
+             end
          | O.NUM n $ [] => O.NAT $$ []
          | `x => VCtx.lookup Gm x
          | _ => raise Match
